@@ -70,7 +70,6 @@
       50% { opacity: 0.4; }
     }
     
-    /* 时间进度 */
     .time-progress-card {
       background: var(--card);
       border-radius: 16px;
@@ -103,7 +102,6 @@
       transition: width 0.8s ease;
     }
     
-    /* 奖项汇总 */
     .awards-summary {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -142,7 +140,6 @@
       font-weight: 700;
     }
     
-    /* 组别 PK 区 */
     .group-section {
       margin-bottom: 40px;
     }
@@ -151,7 +148,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 8px;
       padding: 0 4px;
       flex-wrap: wrap;
       gap: 8px;
@@ -171,7 +168,14 @@
       font-weight: 600;
     }
     
-    /* 组冠军 */
+    .group-note {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      padding: 0 4px;
+      font-style: italic;
+    }
+    
     .group-champion {
       background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
       border: 2px solid var(--gold);
@@ -229,7 +233,32 @@
       font-weight: 700;
     }
     
-    /* 组内排名 */
+    .champion-extra {
+      margin-top: 14px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .champion-extra-item {
+      background: #fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+      min-width: 100px;
+    }
+    
+    .champion-extra-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 2px;
+    }
+    
+    .champion-extra-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
     .rank-list {
       background: var(--card);
       border-radius: 16px;
@@ -281,6 +310,21 @@
     .rank-type {
       font-size: 12px;
       color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    
+    .rank-extra {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .rank-extra span {
+      background: #f3f4f6;
+      padding: 4px 10px;
+      border-radius: 8px;
     }
     
     .rank-bar-track {
@@ -342,6 +386,7 @@
       .champion-medal { font-size: 48px; }
       .champion-dept { font-size: 22px; }
       .champion-rate { font-size: 30px; }
+      .champion-extra { justify-content: center; }
       .rank-item { padding: 14px 16px; gap: 12px; }
     }
   </style>
@@ -368,10 +413,8 @@
     </section>
 
     <section>
-      <div class="ranking-title" style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">🎯 奖项推荐结果</div>
-      <div class="awards-summary" id="awardsSummary">
-        <!-- 动态生成 -->
-      </div>
+      <div style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">🎯 奖项推荐结果</div>
+      <div class="awards-summary" id="awardsSummary"></div>
     </section>
 
     <main id="groupsContainer">
@@ -382,10 +425,11 @@
   </div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxnnvlF9pxxe-As4C6crd8yKS3zwq6bTPHaVCghJcenuEartHIziFulGJYmqq76rIr1BA/exec';
+    // ⚠️ 记得替换成你重新部署后的 Apps Script URL
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxO90rq2O0u44oeV0wj3TzwexEI0dsRmTmEK-qye8UydVVKMJbBNhlgQ6EPXi3licBtiQ/exec';
     
     const Q3_START = '2026-07-01';
-    const Q3_END = '2026-09-30';
+    const Q3_TOTAL_DAYS = 92;
     
     const GROUP_CONFIG = {
       '效果营销中心': { award: '卓越增长团队奖', bonus: '5000元' },
@@ -393,17 +437,21 @@
       '销售/客户成功': { award: '增长协同团队奖', bonus: '3000元' }
     };
     
+    const GROUP_NOTES = {
+      '效果营销中心': '增长率进度等季度末再加上。'
+    };
+    
     function formatPercent(value) {
-      if (value === null || value === undefined || isNaN(value)) return '--';
+      if (value === null || value === undefined || value === '' || isNaN(value)) return '--';
       return (Number(value) * 100).toFixed(2) + '%';
     }
     
     function getTimeProgress() {
-      const start = new Date(Q3_START).getTime();
-      const end = new Date(Q3_END).getTime();
-      const now = Date.now();
-      let progress = (now - start) / (end - start);
-      return Math.max(0, Math.min(1, progress));
+      const start = new Date(Q3_START);
+      const now = new Date();
+      // 含今天计算，7月1日到7月22日 = 22天
+      const diffDays = Math.floor((now - start) / (1000 * 60 * 60 * 24)) + 1;
+      return Math.max(0, Math.min(1, diffDays / Q3_TOTAL_DAYS));
     }
     
     function renderTimeProgress() {
@@ -413,7 +461,7 @@
       return progress;
     }
     
-    function renderAwardsSummary(groups, timeProgress) {
+    function renderAwardsSummary(groups) {
       const container = document.getElementById('awardsSummary');
       container.innerHTML = '';
       
@@ -431,6 +479,44 @@
         `;
         container.appendChild(card);
       });
+    }
+    
+    function renderExtraMetrics(item) {
+      const hasNew = item['新单完成率'] !== undefined && item['新单完成率'] !== '';
+      const hasRenew = item['续费完成率'] !== undefined && item['续费完成率'] !== '';
+      
+      if (!hasNew && !hasRenew) return '';
+      
+      return `
+        <div class="champion-extra">
+          ${hasNew ? `
+            <div class="champion-extra-item">
+              <div class="champion-extra-label">新单完成率</div>
+              <div class="champion-extra-value">${formatPercent(item['新单完成率'])}</div>
+            </div>
+          ` : ''}
+          ${hasRenew ? `
+            <div class="champion-extra-item">
+              <div class="champion-extra-label">续费完成率</div>
+              <div class="champion-extra-value">${formatPercent(item['续费完成率'])}</div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+    
+    function renderRankExtra(item) {
+      const hasNew = item['新单完成率'] !== undefined && item['新单完成率'] !== '';
+      const hasRenew = item['续费完成率'] !== undefined && item['续费完成率'] !== '';
+      
+      if (!hasNew && !hasRenew) return '';
+      
+      return `
+        <div class="rank-extra">
+          ${hasNew ? `<span>新单 ${formatPercent(item['新单完成率'])}</span>` : ''}
+          ${hasRenew ? `<span>续费 ${formatPercent(item['续费完成率'])}</span>` : ''}
+        </div>
+      `;
     }
     
     function renderGroupChampion(winner, config, timeProgress) {
@@ -452,6 +538,7 @@
               <span class="champion-rate">${formatPercent(rate)}</span>
               <span class="champion-gap" style="color: ${isAhead ? 'var(--success)' : 'var(--danger)'}">${gapText}</span>
             </div>
+            ${renderExtraMetrics(winner)}
           </div>
         </div>
       `;
@@ -477,6 +564,7 @@
           <div class="rank-info">
             <div class="rank-dept">${item['部门']}</div>
             <div class="rank-type">${item['指标类型']}</div>
+            ${renderRankExtra(item)}
             <div class="rank-bar-track">
               <div class="rank-bar-fill" style="width: ${Math.min(rate * 100, 100)}%; background: ${barColor}"></div>
             </div>
@@ -490,7 +578,6 @@
     }
     
     function renderGroups(rows, timeProgress) {
-      // 按组别分组
       const groups = {};
       rows.forEach(row => {
         const group = row['组别'] || '其他';
@@ -498,7 +585,6 @@
         groups[group].push(row);
       });
       
-      // 按组别在数据中首次出现的顺序
       const groupOrder = [...new Set(rows.map(r => r['组别'] || '其他'))];
       
       const container = document.getElementById('groupsContainer');
@@ -509,6 +595,7 @@
         const sorted = [...items].sort((a, b) => Number(b['完成率']) - Number(a['完成率']));
         const winner = sorted[0];
         const config = GROUP_CONFIG[groupName] || { award: groupName + '冠军', bonus: '' };
+        const note = GROUP_NOTES[groupName];
         
         const section = document.createElement('section');
         section.className = 'group-section';
@@ -517,6 +604,7 @@
             <div class="group-title">${groupName}</div>
             <div class="group-award">${config.award} · ${config.bonus}</div>
           </div>
+          ${note ? `<div class="group-note">💡 ${note}</div>` : ''}
           ${renderGroupChampion(winner, config, timeProgress)}
           <div class="rank-list">
             ${sorted.map((item, index) => renderRankItem(item, index + 1, timeProgress)).join('')}
@@ -539,7 +627,6 @@
         
         const timeProgress = renderTimeProgress();
         
-        // 按组别分组用于奖项汇总
         const groups = {};
         data.forEach(row => {
           const group = row['组别'] || '其他';
@@ -547,7 +634,7 @@
           groups[group].push(row);
         });
         
-        renderAwardsSummary(groups, timeProgress);
+        renderAwardsSummary(groups);
         renderGroups(data, timeProgress);
         
         const now = new Date();
