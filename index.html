@@ -442,7 +442,7 @@
     };
     
     function formatPercent(value) {
-      if (value === null || value === undefined || value === '' || isNaN(value)) return '--';
+      if (value === null || value === null || value === '' || isNaN(value)) return '--';
       return (Number(value) * 100).toFixed(2) + '%';
     }
     
