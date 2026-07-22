@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Q3 季度目标完成看板</title>
+  <title>Q3 季度目标完成 PK 榜</title>
   <style>
     * { box-sizing: border-box; }
     
@@ -15,6 +15,9 @@
       --success: #10b981;
       --danger: #ef4444;
       --primary: #3b82f6;
+      --gold: #f59e0b;
+      --silver: #9ca3af;
+      --bronze: #b45309;
       --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
     }
     
@@ -28,17 +31,18 @@
     }
     
     .container {
-      max-width: 960px;
+      max-width: 800px;
       margin: 0 auto;
     }
     
     header {
+      text-align: center;
       margin-bottom: 32px;
     }
     
     h1 {
       font-size: 28px;
-      font-weight: 700;
+      font-weight: 800;
       margin: 0 0 8px 0;
     }
     
@@ -47,6 +51,7 @@
       font-size: 14px;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 12px;
       flex-wrap: wrap;
     }
@@ -65,187 +70,199 @@
       50% { opacity: 0.4; }
     }
     
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-    
-    .kpi-card {
+    /* 时间进度 */
+    .time-progress-card {
       background: var(--card);
       border-radius: 16px;
       padding: 20px;
       box-shadow: var(--shadow);
-    }
-    
-    .kpi-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    .kpi-value {
-      font-size: 32px;
-      font-weight: 700;
-    }
-    
-    .kpi-value.success { color: var(--success); }
-    .kpi-value.danger { color: var(--danger); }
-    .kpi-value.primary { color: var(--primary); }
-    
-    .kpi-desc {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
-    
-    .time-progress-card {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: var(--shadow);
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
     
     .time-progress-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     
-    .time-progress-title {
-      font-weight: 600;
-    }
-    
-    .time-progress-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--primary);
-    }
+    .time-progress-title { font-weight: 600; }
+    .time-progress-value { font-size: 18px; font-weight: 700; color: var(--primary); }
     
     .progress-bar {
-      height: 14px;
+      height: 12px;
       background: #e5e7eb;
-      border-radius: 7px;
+      border-radius: 6px;
       overflow: hidden;
     }
     
     .progress-fill {
       height: 100%;
       background: linear-gradient(90deg, #60a5fa, #3b82f6);
-      border-radius: 7px;
+      border-radius: 6px;
       transition: width 0.8s ease;
     }
     
-    .group-title {
+    /* 冠军区 */
+    .champion-card {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      padding: 28px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .champion-card::before {
+      content: "🥇";
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      font-size: 48px;
+      opacity: 0.3;
+    }
+    
+    .champion-label {
+      font-size: 14px;
+      color: #92400e;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .champion-name {
+      font-size: 32px;
+      font-weight: 800;
+      color: #78350f;
+      margin-bottom: 8px;
+    }
+    
+    .champion-group {
+      font-size: 14px;
+      color: #92400e;
+      margin-bottom: 16px;
+    }
+    
+    .champion-rate {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--gold);
+    }
+    
+    .champion-gap {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 14px;
+      background: #fff;
+      border-radius: 20px;
+      font-weight: 700;
+      color: var(--success);
+    }
+    
+    /* 排行榜 */
+    .ranking-title {
       font-size: 18px;
       font-weight: 700;
-      margin: 32px 0 16px 0;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e5e7eb;
+      margin-bottom: 16px;
+      padding-left: 4px;
     }
     
-    .dept-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-    }
-    
-    .dept-card {
+    .rank-item {
       background: var(--card);
       border-radius: 16px;
-      padding: 20px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
       box-shadow: var(--shadow);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    
-    .dept-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-    }
-    
-    .dept-header {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 16px;
+      align-items: center;
+      gap: 16px;
+      transition: transform 0.15s ease;
     }
     
-    .dept-name {
+    .rank-item:hover {
+      transform: translateX(4px);
+    }
+    
+    .rank-item.top1 { border-left: 5px solid var(--gold); }
+    .rank-item.top2 { border-left: 5px solid var(--silver); }
+    .rank-item.top3 { border-left: 5px solid var(--bronze); }
+    
+    .rank-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      background: #f3f4f6;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    
+    .rank-number.medal {
+      font-size: 28px;
+      background: transparent;
+    }
+    
+    .rank-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .rank-dept {
       font-size: 16px;
       font-weight: 700;
+      margin-bottom: 4px;
     }
     
-    .dept-type {
+    .rank-meta {
       font-size: 12px;
       color: var(--text-secondary);
-      background: #f3f4f6;
-      padding: 4px 10px;
-      border-radius: 12px;
-      white-space: nowrap;
-    }
-    
-    .metric {
-      margin-bottom: 16px;
-    }
-    
-    .metric:last-child {
-      margin-bottom: 0;
-    }
-    
-    .metric-label {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
       display: flex;
-      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
     
-    .metric-value {
-      font-size: 24px;
-      font-weight: 700;
-    }
-    
-    .metric-value.success { color: var(--success); }
-    .metric-value.danger { color: var(--danger); }
-    
-    .mini-bar {
+    .rank-bar-track {
       height: 8px;
       background: #e5e7eb;
       border-radius: 4px;
       overflow: hidden;
-      margin-top: 8px;
+      margin-top: 10px;
     }
     
-    .mini-bar-fill {
+    .rank-bar-fill {
       height: 100%;
       border-radius: 4px;
       transition: width 0.8s ease;
     }
     
-    .gap-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 14px;
+    .rank-rate {
+      text-align: right;
+      min-width: 80px;
+    }
+    
+    .rank-rate-value {
+      font-size: 22px;
+      font-weight: 800;
+    }
+    
+    .rank-rate-value.success { color: var(--success); }
+    .rank-rate-value.danger { color: var(--danger); }
+    .rank-rate-value.primary { color: var(--primary); }
+    
+    .rank-gap {
+      font-size: 12px;
+      margin-top: 4px;
       font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 12px;
     }
     
-    .gap-badge.success {
-      background: #d1fae5;
-      color: #065f46;
-    }
-    
-    .gap-badge.danger {
-      background: #fee2e2;
-      color: #991b1b;
-    }
+    .rank-gap.success { color: var(--success); }
+    .rank-gap.danger { color: var(--danger); }
     
     .status {
       text-align: center;
@@ -258,54 +275,31 @@
     }
     
     .last-update {
-      text-align: right;
+      text-align: center;
       font-size: 12px;
       color: var(--text-secondary);
       margin-top: 32px;
     }
     
     @media (max-width: 640px) {
-      h1 { font-size: 22px; }
-      .kpi-grid { grid-template-columns: 1fr; }
-      .dept-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 24px; }
+      .champion-name { font-size: 26px; }
+      .champion-rate { font-size: 38px; }
+      .rank-item { padding: 14px 16px; gap: 12px; }
+      .rank-number { width: 34px; height: 34px; font-size: 14px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Q3 季度目标完成看板</h1>
+      <h1>🏆 Q3 季度目标完成 PK 榜</h1>
       <div class="subtitle">
         <span><span class="live-dot"></span> 实时同步自 Google Sheets</span>
         <span>·</span>
-        <span>仅展示完成率与进度，不显示具体金额</span>
+        <span>仅展示完成率与进度</span>
       </div>
     </header>
-
-    <section id="kpiSection" style="display: none;">
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-label">平均完成率</div>
-          <div class="kpi-value primary" id="avgRate">--</div>
-          <div class="kpi-desc">所有部门平均值</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">领先部门</div>
-          <div class="kpi-value success" id="aheadCount">--</div>
-          <div class="kpi-desc">完成率 ≥ 时间进度</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">落后部门</div>
-          <div class="kpi-value danger" id="behindCount">--</div>
-          <div class="kpi-desc">完成率 < 时间进度</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">最佳完成率</div>
-          <div class="kpi-value success" id="bestRate">--</div>
-          <div class="kpi-desc" id="bestDept">--</div>
-        </div>
-      </div>
-    </section>
 
     <section class="time-progress-card">
       <div class="time-progress-header">
@@ -317,25 +311,37 @@
       </div>
     </section>
 
-    <main id="board">
-      <div class="status">数据加载中...</div>
+    <section id="championSection" style="display: none;">
+      <div class="champion-card">
+        <div class="champion-label">当前冠军</div>
+        <div class="champion-name" id="championName">--</div>
+        <div class="champion-group" id="championGroup">--</div>
+        <div class="champion-rate" id="championRate">--</div>
+        <div class="champion-gap" id="championGap">--</div>
+      </div>
+    </section>
+
+    <main>
+      <div class="ranking-title">📊 完整排行榜</div>
+      <div id="rankingList">
+        <div class="status">数据加载中...</div>
+      </div>
     </main>
 
     <div class="last-update" id="lastUpdate"></div>
   </div>
 
   <script>
-    // ⚠️ 如果重新部署了 Apps Script，需要更新这里的 URL
     const API_URL = 'https://script.google.com/macros/s/AKfycbxnnvlF9pxxe-As4C6crd8yKS3zwq6bTPHaVCghJcenuEartHIziFulGJYmqq76rIr1BA/exec';
-
+    
     const Q3_START = '2026-07-01';
     const Q3_END = '2026-09-30';
-
+    
     function formatPercent(value) {
       if (value === null || value === undefined || isNaN(value)) return '--';
       return (Number(value) * 100).toFixed(2) + '%';
     }
-
+    
     function getTimeProgress() {
       const start = new Date(Q3_START).getTime();
       const end = new Date(Q3_END).getTime();
@@ -343,121 +349,106 @@
       let progress = (now - start) / (end - start);
       return Math.max(0, Math.min(1, progress));
     }
-
+    
     function renderTimeProgress() {
       const progress = getTimeProgress();
       document.getElementById('timeRate').textContent = formatPercent(progress);
       document.getElementById('timeFill').style.width = (progress * 100) + '%';
       return progress;
     }
-
-    function renderKPIs(rows, timeProgress) {
-      const rates = rows.map(r => Number(r['完成率'])).filter(v => !isNaN(v));
-      const avg = rates.reduce((a, b) => a + b, 0) / rates.length;
-      const ahead = rows.filter(r => Number(r['完成率']) >= timeProgress).length;
-      const behind = rows.length - ahead;
-      const maxRate = Math.max(...rates);
-      const bestDept = rows.find(r => Number(r['完成率']) === maxRate);
-
-      document.getElementById('avgRate').textContent = formatPercent(avg);
-      document.getElementById('aheadCount').textContent = ahead;
-      document.getElementById('behindCount').textContent = behind;
-      document.getElementById('bestRate').textContent = formatPercent(maxRate);
-      document.getElementById('bestDept').textContent = bestDept ? bestDept['部门'] : '--';
-      document.getElementById('kpiSection').style.display = 'block';
+    
+    function getMedal(rank) {
+      if (rank === 1) return '🥇';
+      if (rank === 2) return '🥈';
+      if (rank === 3) return '🥉';
+      return String(rank);
     }
-
-    function renderDeptCard(item, timeProgress) {
-      const rate = Number(item['完成率']) || 0;
-      const gap = Number(item['与时间进度差距']) || 0;
-      const isAhead = rate >= timeProgress;
-      const statusClass = isAhead ? 'success' : 'danger';
-      const fillColor = isAhead ? 'var(--success)' : 'var(--primary)';
-
-      return `
-        <div class="dept-card">
-          <div class="dept-header">
-            <div class="dept-name">${item['部门'] || '--'}</div>
-            <div class="dept-type">${item['指标类型'] || '--'}</div>
-          </div>
-          
-          <div class="metric">
-            <div class="metric-label">
-              <span>目标完成率</span>
-              <span>${formatPercent(rate)}</span>
-            </div>
-            <div class="mini-bar">
-              <div class="mini-bar-fill" style="width: ${Math.min(rate * 100, 100)}%; background: ${fillColor}"></div>
-            </div>
-          </div>
-          
-          <div class="metric">
-            <div class="metric-label">
-              <span>与时间差距</span>
-              <span class="gap-badge ${statusClass}">
-                ${gap >= 0 ? '▲' : '▼'} ${formatPercent(Math.abs(gap))}
-              </span>
-            </div>
-          </div>
-        </div>
-      `;
+    
+    function renderChampion(winner) {
+      const section = document.getElementById('championSection');
+      document.getElementById('championName').textContent = winner['部门'];
+      document.getElementById('championGroup').textContent = winner['组别'] + ' · ' + winner['指标类型'];
+      document.getElementById('championRate').textContent = formatPercent(winner['完成率']);
+      
+      const gap = Number(winner['与时间进度差距']) || 0;
+      const gapText = gap >= 0 
+        ? `领先时间进度 ${formatPercent(gap)}` 
+        : `落后时间进度 ${formatPercent(Math.abs(gap))}`;
+      document.getElementById('championGap').textContent = gapText;
+      
+      section.style.display = 'block';
     }
-
-    function renderGroups(rows, timeProgress) {
-      const board = document.getElementById('board');
-      board.innerHTML = '';
-
-      const groups = {};
-      rows.forEach(row => {
-        const group = row['组别'] || '其他';
-        if (!groups[group]) groups[group] = [];
-        groups[group].push(row);
-      });
-
-      const groupOrder = [...new Set(rows.map(r => r['组别'] || '其他'))];
-
-      groupOrder.forEach(group => {
-        const groupRows = groups[group];
-        const section = document.createElement('section');
-        section.innerHTML = `
-          <h2 class="group-title">${group}</h2>
-          <div class="dept-grid">
-            ${groupRows.map(item => renderDeptCard(item, timeProgress)).join('')}
+    
+    function renderRanking(rows, timeProgress) {
+      const sorted = [...rows].sort((a, b) => Number(b['完成率']) - Number(a['完成率']));
+      const list = document.getElementById('rankingList');
+      list.innerHTML = '';
+      
+      sorted.forEach((item, index) => {
+        const rank = index + 1;
+        const rate = Number(item['完成率']) || 0;
+        const gap = Number(item['与时间进度差距']) || 0;
+        const isAhead = rate >= timeProgress;
+        const rateClass = isAhead ? 'success' : 'danger';
+        const gapClass = isAhead ? 'success' : 'danger';
+        const barColor = isAhead ? 'var(--success)' : 'var(--primary)';
+        const gapSymbol = gap >= 0 ? '+' : '-';
+        
+        const medal = getMedal(rank);
+        const isTop3 = rank <= 3;
+        
+        const itemEl = document.createElement('div');
+        itemEl.className = `rank-item ${isTop3 ? 'top' + rank : ''}`;
+        itemEl.innerHTML = `
+          <div class="rank-number ${isTop3 ? 'medal' : ''}">${medal}</div>
+          <div class="rank-info">
+            <div class="rank-dept">${item['部门']}</div>
+            <div class="rank-meta">
+              <span>${item['组别']}</span>
+              <span>·</span>
+              <span>${item['指标类型']}</span>
+            </div>
+            <div class="rank-bar-track">
+              <div class="rank-bar-fill" style="width: ${Math.min(rate * 100, 100)}%; background: ${barColor}"></div>
+            </div>
+          </div>
+          <div class="rank-rate">
+            <div class="rank-rate-value ${rateClass}">${formatPercent(rate)}</div>
+            <div class="rank-gap ${gapClass}">${gapSymbol}${formatPercent(Math.abs(gap))}</div>
           </div>
         `;
-        board.appendChild(section);
+        list.appendChild(itemEl);
       });
     }
-
+    
     async function loadData() {
       try {
         const res = await fetch(API_URL);
         const data = await res.json();
-
-        if (data.error) {
-          throw new Error(data.error);
-        }
-
+        
+        if (data.error) throw new Error(data.error);
         if (!Array.isArray(data) || data.length === 0) {
-          document.getElementById('board').innerHTML = '<div class="status">暂无数据</div>';
+          document.getElementById('rankingList').innerHTML = '<div class="status">暂无数据</div>';
           return;
         }
-
+        
         const timeProgress = renderTimeProgress();
-        renderKPIs(data, timeProgress);
-        renderGroups(data, timeProgress);
-
+        const sorted = [...data].sort((a, b) => Number(b['完成率']) - Number(a['完成率']));
+        
+        renderChampion(sorted[0]);
+        renderRanking(data, timeProgress);
+        
         const now = new Date();
         document.getElementById('lastUpdate').textContent = 
           '最后更新：' + now.toLocaleString('zh-CN');
-
+        
       } catch (err) {
-        document.getElementById('board').innerHTML = 
+        document.getElementById('rankingList').innerHTML = 
           `<div class="status error">数据加载失败：${err.message}<br>请检查 API_URL 和 Apps Script 权限设置。</div>`;
         console.error(err);
       }
     }
-
+    
     loadData();
     setInterval(loadData, 5 * 60 * 1000);
   </script>
