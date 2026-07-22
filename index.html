@@ -413,7 +413,7 @@
     </section>
 
     <section>
-      <div style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">🎯 目前领先团队</div>
+      <div style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">🎯 当前领先团队</div>
       <div class="awards-summary" id="awardsSummary"></div>
     </section>
 
@@ -425,241 +425,838 @@
   </div>
 
   <script>
-    // ⚠️ 记得替换成你重新部署后的 Apps Script URL
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxO90rq2O0u44oeV0wj3TzwexEI0dsRmTmEK-qye8UydVVKMJbBNhlgQ6EPXi3licBtiQ/exec';
-    
-    const Q3_START = '2026-07-01';
-    const Q3_TOTAL_DAYS = 92;
-    
-    const GROUP_CONFIG = {
-  '效果营销中心': { 
-    award: '卓越增长团队奖',
-    bonus: ''
+
+const API_URL = 'https://script.google.com/macros/s/AKfycbxzQoC3fnu9hfWW5A38u7kvyJRaTyd0nzKpJu03bk8xBcmL0tOKd_DfZeW0yx7WqyZN/exec';
+
+
+const Q3_START = '2026-07-01';
+const Q3_TOTAL_DAYS = 92;
+
+
+const GROUP_CONFIG = {
+
+  '效果营销中心': {
+    award:'卓越增长团队奖',
+    bonus:''
   },
-  '品牌/SEO': { 
-    award: '卓越经营团队奖',
-    bonus: ''
+
+  '品牌/SEO':{
+    award:'卓越经营团队奖',
+    bonus:''
   },
-  '销售/客户成功': { 
-    award: '增长协同团队奖',
-    bonus: ''
+
+  '销售/客户成功':{
+    award:'增长协同团队奖',
+    bonus:''
   }
+
 };
-    
-    const GROUP_NOTES = {
-      '效果营销中心': '增长率进度等季度末再加上。'
-    };
-    
-    function formatPercent(value) {
-      if (value === null || value === null || value === '' || isNaN(value)) return '--';
-      return (Number(value) * 100).toFixed(2) + '%';
-    }
-    
-    function getTimeProgress() {
-      const start = new Date(Q3_START);
-      const now = new Date();
-      // 含今天计算，7月1日到7月22日 = 22天
-      const diffDays = Math.floor((now - start) / (1000 * 60 * 60 * 24)) + 1;
-      return Math.max(0, Math.min(1, diffDays / Q3_TOTAL_DAYS));
-    }
-    
-    function renderTimeProgress() {
-      const progress = getTimeProgress();
-      document.getElementById('timeRate').textContent = formatPercent(progress);
-      document.getElementById('timeFill').style.width = (progress * 100) + '%';
-      return progress;
-    }
-    
-    function renderAwardsSummary(groups) {
-      const container = document.getElementById('awardsSummary');
-      container.innerHTML = '';
-      
-      Object.entries(groups).forEach(([groupName, items]) => {
-        const sorted = [...items].sort((a, b) => Number(b['完成率']) - Number(a['完成率']));
-        const winner = sorted[0];
-        const config = GROUP_CONFIG[groupName] || { award: groupName + '冠军', bonus: '' };
-        
-        const card = document.createElement('div');
-        card.className = 'award-summary-card';
-        card.innerHTML = `
-          <div class="award-name">${config.award}</div>
-          <div class="award-winner">${winner['部门']}</div>
-        `;
-        container.appendChild(card);
-      });
-    }
-    
-    function renderExtraMetrics(item) {
-      const hasNew = item['新单完成率'] !== undefined && item['新单完成率'] !== '';
-      const hasRenew = item['续费完成率'] !== undefined && item['续费完成率'] !== '';
-      
-      if (!hasNew && !hasRenew) return '';
-      
-      return `
-        <div class="champion-extra">
-          ${hasNew ? `
-            <div class="champion-extra-item">
-              <div class="champion-extra-label">新单完成率</div>
-              <div class="champion-extra-value">${formatPercent(item['新单完成率'])}</div>
-            </div>
-          ` : ''}
-          ${hasRenew ? `
-            <div class="champion-extra-item">
-              <div class="champion-extra-label">续费完成率</div>
-              <div class="champion-extra-value">${formatPercent(item['续费完成率'])}</div>
-            </div>
-          ` : ''}
-        </div>
-      `;
-    }
-    
-    function renderRankExtra(item) {
-      const hasNew = item['新单完成率'] !== undefined && item['新单完成率'] !== '';
-      const hasRenew = item['续费完成率'] !== undefined && item['续费完成率'] !== '';
-      
-      if (!hasNew && !hasRenew) return '';
-      
-      return `
-        <div class="rank-extra">
-          ${hasNew ? `<span>新单 ${formatPercent(item['新单完成率'])}</span>` : ''}
-          ${hasRenew ? `<span>续费 ${formatPercent(item['续费完成率'])}</span>` : ''}
-        </div>
-      `;
-    }
-    
-    function renderGroupChampion(winner, config, timeProgress) {
-      const rate = Number(winner['完成率']) || 0;
-      const gap = Number(winner['与时间进度差距']) || 0;
-      const isAhead = rate >= timeProgress;
-      const gapText = gap >= 0 
-        ? `领先时间进度 ${formatPercent(gap)}` 
-        : `落后时间进度 ${formatPercent(Math.abs(gap))}`;
-      
-      return `
-        <div class="group-champion">
-          <div class="champion-medal">🥇</div>
-          <div class="champion-info">
-            <div class="champion-label">该组冠军 / 推荐获奖</div>
-            <div class="champion-dept">${winner['部门']}</div>
-            <div class="champion-meta">${winner['指标类型']} · ${config.award}</div>
-            <div>
-              <span class="champion-rate">${formatPercent(rate)}</span>
-              <span class="champion-gap" style="color: ${isAhead ? 'var(--success)' : 'var(--danger)'}">${gapText}</span>
-            </div>
-            ${renderExtraMetrics(winner)}
-          </div>
-        </div>
-      `;
-    }
-    
-    function renderRankItem(item, rank, timeProgress) {
-      const rate = Number(item['完成率']) || 0;
-      const gap = Number(item['与时间进度差距']) || 0;
-      const isAhead = rate >= timeProgress;
-      const rateClass = isAhead ? 'success' : 'danger';
-      const gapClass = isAhead ? 'success' : 'danger';
-      const barColor = isAhead ? 'var(--success)' : 'var(--primary)';
-      const gapSymbol = gap >= 0 ? '+' : '-';
-      
-      let rankClass = '';
-      if (rank === 1) rankClass = 'top1';
-      else if (rank === 2) rankClass = 'top2';
-      else if (rank === 3) rankClass = 'top3';
-      
-      return `
-        <div class="rank-item">
-          <div class="rank-number ${rankClass}">${rank}</div>
-          <div class="rank-info">
-            <div class="rank-dept">${item['部门']}</div>
-            <div class="rank-type">${item['指标类型']}</div>
-            ${renderRankExtra(item)}
-            <div class="rank-bar-track">
-              <div class="rank-bar-fill" style="width: ${Math.min(rate * 100, 100)}%; background: ${barColor}"></div>
-            </div>
-          </div>
-          <div class="rank-rate">
-            <div class="rank-rate-value ${rateClass}">${formatPercent(rate)}</div>
-            <div class="rank-gap ${gapClass}">${gapSymbol}${formatPercent(Math.abs(gap))}</div>
-          </div>
-        </div>
-      `;
-    }
-    
-    function renderGroups(rows, timeProgress) {
-      const groups = {};
-      rows.forEach(row => {
-        const group = row['组别'] || '其他';
-        if (!groups[group]) groups[group] = [];
-        groups[group].push(row);
-      });
-      
-      const groupOrder = [...new Set(rows.map(r => r['组别'] || '其他'))];
-      
-      const container = document.getElementById('groupsContainer');
-      container.innerHTML = '';
-      
-      groupOrder.forEach(groupName => {
-        const items = groups[groupName];
-        const sorted = [...items].sort((a, b) => Number(b['完成率']) - Number(a['完成率']));
-        const winner = sorted[0];
-        const config = GROUP_CONFIG[groupName] || { award: groupName + '冠军', bonus: '' };
-        const note = GROUP_NOTES[groupName];
-        
-        const section = document.createElement('section');
-        section.className = 'group-section';
-        section.innerHTML = `
-          <div class="group-header">
-            <div class="group-title">${groupName}</div>
-            <div class="group-award">
-  ${config.award}${config.bonus ? ' · ' + config.bonus : ''}
+
+
+
+function formatPercent(value){
+
+  if(value===undefined || value===null || value===''){
+    return '--';
+  }
+
+
+  if(typeof value==='string' && value.includes('%')){
+    return value;
+  }
+
+
+  return (Number(value)*100).toFixed(2)+'%';
+
+}
+
+
+
+function getTimeProgress(){
+
+  const start=new Date(Q3_START);
+  const now=new Date();
+
+  const days=Math.floor(
+    (now-start)/(1000*60*60*24)
+  )+1;
+
+
+  return Math.max(
+    0,
+    Math.min(
+      1,
+      days/Q3_TOTAL_DAYS
+    )
+  );
+
+}
+
+
+
+
+function renderTimeProgress(){
+
+ const progress=getTimeProgress();
+
+
+ document.getElementById('timeRate')
+ .textContent=formatPercent(progress);
+
+
+ document.getElementById('timeFill')
+ .style.width=(progress*100)+'%';
+
+
+ return progress;
+
+}
+
+
+
+
+// 根据组别显示评分
+function renderScoreMetrics(item){
+
+ let metrics=[];
+
+
+ const group=item['组别'];
+
+
+// 效果营销中心
+ if(group==='效果营销中心'){
+
+   metrics=[
+
+     {
+       label:'毛利完成率',
+       value:formatPercent(item['完成率'])
+     },
+
+     {
+       label:'Q3较Q2增长率',
+       value:formatPercent(item['Q3较Q2增长率'])
+     },
+
+     {
+       label:'毛利完成得分',
+       value:Number(item['毛利完成得分']).toFixed(2)
+     },
+
+     {
+       label:'增长率得分',
+       value:Number(item['增长率得分']).toFixed(2)
+     },
+
+     {
+       label:'综合得分',
+       value:Number(item['综合得分']).toFixed(2)
+     }
+
+   ];
+
+ }
+
+
+
+// 品牌/SEO
+ else if(group==='品牌/SEO'){
+
+   metrics=[
+
+     {
+       label:'服务费完成率',
+       value:formatPercent(item['完成率'])
+     },
+
+     {
+       label:'综合得分',
+       value:Number(item['综合得分']).toFixed(2)
+     }
+
+   ];
+
+ }
+
+
+
+// 销售/客户成功
+ else if(group==='销售/客户成功'){
+
+
+   metrics=[
+
+     {
+       label:'服务费完成率',
+       value:formatPercent(item['完成率'])
+     },
+
+
+     {
+       label:'新单完成率',
+       value:formatPercent(item['新单完成率'])
+     },
+
+
+     {
+       label:'续费完成率',
+       value:formatPercent(item['续费完成率'])
+     },
+
+
+     {
+       label:'新单完成得分',
+       value:Number(item['新单完成得分']).toFixed(2)
+     },
+
+
+     {
+       label:'续费完成得分',
+       value:Number(item['续费完成得分']).toFixed(2)
+     },
+
+
+     {
+       label:'综合得分',
+       value:Number(item['综合得分']).toFixed(2)
+     }
+
+
+   ];
+
+
+ }
+
+
+
+
+ return `
+
+<div class="champion-extra">
+
+${metrics.map(m=>`
+
+<div class="champion-extra-item">
+
+<div class="champion-extra-label">
+${m.label}
 </div>
-          </div>
-          ${note ? `<div class="group-note">💡 ${note}</div>` : ''}
-          ${renderGroupChampion(winner, config, timeProgress)}
-          <div class="rank-list">
-            ${sorted.map((item, index) => renderRankItem(item, index + 1, timeProgress)).join('')}
-          </div>
-        `;
-        container.appendChild(section);
-      });
-    }
-    
-    async function loadData() {
-      try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        
-        if (data.error) throw new Error(data.error);
-        if (!Array.isArray(data) || data.length === 0) {
-          document.getElementById('groupsContainer').innerHTML = '<div class="status">暂无数据</div>';
-          return;
-        }
-        
-        const timeProgress = renderTimeProgress();
-        
-        const groups = {};
-        data.forEach(row => {
-          const group = row['组别'] || '其他';
-          if (!groups[group]) groups[group] = [];
-          groups[group].push(row);
-        });
-        
-        renderAwardsSummary(groups);
-        renderGroups(data, timeProgress);
-        
-        const now = new Date();
-        document.getElementById('lastUpdate').textContent = 
-          '最后更新：' + now.toLocaleString('zh-CN');
-        
-      } catch (err) {
-        document.getElementById('groupsContainer').innerHTML = 
-          `<div class="status error">数据加载失败：${err.message}<br>请检查 API_URL 和 Apps Script 权限设置。</div>`;
-        console.error(err);
-      }
-    }
-    
-    loadData();
-    setInterval(loadData, 5 * 60 * 1000);
-  </script>
+
+
+<div class="champion-extra-value">
+${m.value}
+</div>
+
+
+</div>
+
+
+`).join('')}
+
+
+</div>
+
+
+`;
+
+}
+
+
+function renderRankExtra(item){
+
+
+const group=item['组别'];
+
+let metrics=[];
+
+
+if(group==='效果营销中心'){
+
+metrics=[
+
+{
+label:'毛利',
+value:formatPercent(item['完成率'])
+},
+
+{
+label:'增长',
+value:formatPercent(item['Q3较Q2增长率'])
+},
+
+{
+label:'综合',
+value:Number(item['综合得分']).toFixed(1)
+}
+
+];
+
+
+}
+
+
+else if(group==='品牌/SEO'){
+
+
+metrics=[
+
+{
+label:'服务费',
+value:formatPercent(item['完成率'])
+},
+
+{
+label:'综合',
+value:Number(item['综合得分']).toFixed(1)
+}
+
+];
+
+
+}
+
+
+
+else if(group==='销售/客户成功'){
+
+
+metrics=[
+
+{
+label:'服务费',
+value:formatPercent(item['完成率'])
+},
+
+{
+label:'新单',
+value:formatPercent(item['新单完成率'])
+},
+
+{
+label:'续费',
+value:formatPercent(item['续费完成率'])
+},
+
+{
+label:'综合',
+value:Number(item['综合得分']).toFixed(1)
+}
+
+
+];
+
+
+}
+
+
+
+return `
+
+<div class="rank-extra">
+
+${metrics.map(m=>`
+
+<span>
+${m.label} ${m.value}
+</span>
+
+`).join('')}
+
+
+</div>
+
+
+`;
+
+
+}
+
+
+
+function renderGroupChampion(winner,config,timeProgress){
+
+
+ const score=
+ Number(winner['综合得分'])||0;
+
+
+ const rate=score/100;
+
+
+ const gap=
+ Number(winner['与时间进度差距'])||0;
+
+
+
+ const isAhead=
+ rate>=timeProgress;
+
+
+
+ return `
+
+ <div class="group-champion">
+
+ <div class="champion-medal">
+ 🥇
+ </div>
+
+
+ <div class="champion-info">
+
+
+ <div class="champion-label">
+ 该组冠军 / 推荐获奖
+ </div>
+
+
+ <div class="champion-dept">
+ ${winner['部门']}
+ </div>
+
+
+
+ <div class="champion-meta">
+
+ ${winner['指标类型']} · ${config.award}
+
+ </div>
+
+
+
+ <div>
+
+ <span class="champion-rate">
+
+ ${Number(score).toFixed(2)}
+
+ </span>
+
+
+ <span class="champion-gap">
+
+ 综合得分
+
+ </span>
+
+
+ </div>
+
+
+
+ ${renderScoreMetrics(winner)}
+
+
+
+ </div>
+
+
+ </div>
+
+
+ `;
+
+
+}
+
+
+
+
+
+
+
+function renderRankItem(item,rank,timeProgress){
+
+
+ const score=
+ Number(item['综合得分'])||0;
+
+
+ const rate=score/100;
+
+
+ let rankClass='';
+
+
+ if(rank===1) rankClass='top1';
+ if(rank===2) rankClass='top2';
+ if(rank===3) rankClass='top3';
+
+
+
+ return `
+
+
+ <div class="rank-item">
+
+
+ <div class="rank-number ${rankClass}">
+ ${rank}
+ </div>
+
+
+ <div class="rank-info">
+
+
+ <div class="rank-dept">
+ ${item['部门']}
+ </div>
+
+
+ <div class="rank-type">
+ ${item['指标类型']}
+ </div>
+
+
+ ${renderRankExtra(item)}
+
+
+
+ <div class="rank-bar-track">
+
+ <div class="rank-bar-fill"
+ style="
+ width:${Math.min(score,100)}%;
+ background:var(--success)
+ ">
+ </div>
+
+ </div>
+
+
+ </div>
+
+
+
+
+ <div class="rank-rate">
+
+ <div class="rank-rate-value success">
+
+ ${score.toFixed(2)}
+
+ </div>
+
+
+ <div class="rank-gap">
+
+ 综合得分
+
+ </div>
+
+
+ </div>
+
+
+ </div>
+
+
+ `;
+
+
+}
+
+
+
+
+
+
+
+function renderGroups(rows,timeProgress){
+
+
+ const groups={};
+
+
+ rows.forEach(row=>{
+
+ let g=row['组别']||'其他';
+
+ if(!groups[g]){
+   groups[g]=[];
+ }
+
+ groups[g].push(row);
+
+
+ });
+
+
+
+ const container=
+ document.getElementById('groupsContainer');
+
+
+ container.innerHTML='';
+
+
+
+ Object.entries(groups).forEach(([group,items])=>{
+
+
+ const sorted=[...items].sort(
+ (a,b)=>
+ Number(b['综合得分'])-
+ Number(a['综合得分'])
+ );
+
+
+ const winner=sorted[0];
+
+
+ const config=
+ GROUP_CONFIG[group]||{
+ award:group,
+ bonus:''
+ };
+
+
+
+ const section=document.createElement('section');
+
+ section.className='group-section';
+
+
+
+ section.innerHTML=`
+
+
+ <div class="group-header">
+
+ <div class="group-title">
+ ${group}
+ </div>
+
+
+ <div class="group-award">
+
+ ${config.award}
+ ·
+ ${config.bonus}
+
+ </div>
+
+
+ </div>
+
+
+ ${renderGroupChampion(
+ winner,
+ config,
+ timeProgress
+ )}
+
+
+
+ <div class="rank-list">
+
+ ${sorted.map(
+ (item,index)=>
+ renderRankItem(
+ item,
+ index+1,
+ timeProgress
+ )
+ ).join('')}
+
+
+ </div>
+
+
+ `;
+
+
+ container.appendChild(section);
+
+
+
+ });
+
+
+}
+
+
+
+
+
+
+
+async function loadData(){
+
+
+ try{
+
+
+ const res=
+ await fetch(API_URL);
+
+
+ const data=
+ await res.json();
+
+
+
+ console.log(data);
+
+
+
+ if(data.error){
+   throw new Error(data.error);
+ }
+
+
+
+ const progress=
+ renderTimeProgress();
+
+
+
+ const groups={};
+
+
+data.forEach(row=>{
+
+ const g=row['组别']||'其他';
+
+
+ if(!groups[g]){
+   groups[g]=[];
+ }
+
+ groups[g].push(row);
+
+
+});
+
+
+// 顶部三个卡片
+renderAwardsSummary(groups);
+
+
+// 下面排行榜
+renderGroups(
+ data,
+ progress
+);
+
+
+
+ document.getElementById('lastUpdate')
+ .textContent=
+ '最后更新：'+
+ new Date().toLocaleString('zh-CN');
+
+
+
+ }
+
+ catch(err){
+
+
+ document.getElementById('groupsContainer')
+ .innerHTML=
+ `
+ <div class="status error">
+ 数据加载失败：
+ ${err.message}
+ </div>
+ `;
+
+
+ console.error(err);
+
+
+ }
+
+
+
+}
+
+
+
+
+loadData();
+
+
+setInterval(
+ loadData,
+ 5*60*1000
+);
+
+
+function renderAwardsSummary(groups){
+
+
+ const container =
+ document.getElementById('awardsSummary');
+
+
+ container.innerHTML='';
+
+
+
+ Object.entries(groups).forEach(([group,items])=>{
+
+
+   const winner =
+   [...items].sort(
+    (a,b)=>
+    Number(b['综合得分'])-
+    Number(a['综合得分'])
+   )[0];
+
+
+
+   const config =
+   GROUP_CONFIG[group] || {
+     award:group,
+     bonus:''
+   };
+
+
+
+   const card =
+   document.createElement('div');
+
+
+   card.className='award-summary-card';
+
+
+
+   card.innerHTML=`
+
+   <div class="award-name">
+   ${config.award}
+   </div>
+
+
+   <div class="award-winner">
+   🥇 ${winner['部门']}
+   </div>
+
+
+   <div class="award-bonus">
+
+   综合得分：
+   ${Number(winner['综合得分']).toFixed(2)}
+
+   </div>
+
+
+   `;
+
+
+
+   container.appendChild(card);
+
+
+
+ });
+
+
+}
+
+</script>
 </body>
 </html>
