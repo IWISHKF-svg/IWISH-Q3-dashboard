@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Q3 季度目标完成 PK 榜</title>
+  <title>Q3 季度团队 PK 榜</title>
   <style>
     * { box-sizing: border-box; }
     
@@ -31,7 +31,7 @@
     }
     
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
     }
     
@@ -103,110 +103,169 @@
       transition: width 0.8s ease;
     }
     
-    /* 冠军区 */
-    .champion-card {
-      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-      border: 2px solid var(--gold);
-      border-radius: 20px;
-      padding: 28px;
-      text-align: center;
-      box-shadow: var(--shadow);
-      margin-bottom: 24px;
-      position: relative;
-      overflow: hidden;
+    /* 奖项汇总 */
+    .awards-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
     }
     
-    .champion-card::before {
-      content: "🥇";
-      position: absolute;
-      top: 10px;
-      right: 16px;
-      font-size: 48px;
-      opacity: 0.3;
+    .award-summary-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border-top: 4px solid var(--gold);
+    }
+    
+    .award-summary-card:nth-child(2) { border-top-color: var(--silver); }
+    .award-summary-card:nth-child(3) { border-top-color: var(--bronze); }
+    
+    .award-name {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    
+    .award-winner {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    
+    .award-bonus {
+      font-size: 14px;
+      color: var(--gold);
+      font-weight: 700;
+    }
+    
+    /* 组别 PK 区 */
+    .group-section {
+      margin-bottom: 40px;
+    }
+    
+    .group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding: 0 4px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .group-title {
+      font-size: 20px;
+      font-weight: 800;
+    }
+    
+    .group-award {
+      font-size: 13px;
+      color: var(--text-secondary);
+      background: #f3f4f6;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    
+    /* 组冠军 */
+    .group-champion {
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: var(--shadow);
+    }
+    
+    .champion-medal {
+      font-size: 56px;
+      flex-shrink: 0;
+    }
+    
+    .champion-info {
+      flex: 1;
     }
     
     .champion-label {
-      font-size: 14px;
+      font-size: 13px;
       color: #92400e;
-      font-weight: 600;
-      margin-bottom: 8px;
+      font-weight: 700;
+      margin-bottom: 4px;
     }
     
-    .champion-name {
-      font-size: 32px;
+    .champion-dept {
+      font-size: 26px;
       font-weight: 800;
       color: #78350f;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     
-    .champion-group {
+    .champion-meta {
       font-size: 14px;
       color: #92400e;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
     
     .champion-rate {
-      font-size: 48px;
+      font-size: 36px;
       font-weight: 800;
       color: var(--gold);
     }
     
     .champion-gap {
       display: inline-block;
-      margin-top: 8px;
-      padding: 6px 14px;
+      margin-left: 10px;
+      padding: 4px 10px;
       background: #fff;
-      border-radius: 20px;
+      border-radius: 12px;
+      font-size: 13px;
       font-weight: 700;
-      color: var(--success);
     }
     
-    /* 排行榜 */
-    .ranking-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      padding-left: 4px;
+    /* 组内排名 */
+    .rank-list {
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
     }
     
     .rank-item {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 16px 20px;
-      margin-bottom: 12px;
-      box-shadow: var(--shadow);
       display: flex;
       align-items: center;
       gap: 16px;
-      transition: transform 0.15s ease;
+      padding: 16px 20px;
+      border-bottom: 1px solid #f3f4f6;
+      transition: background 0.15s ease;
     }
     
-    .rank-item:hover {
-      transform: translateX(4px);
-    }
-    
-    .rank-item.top1 { border-left: 5px solid var(--gold); }
-    .rank-item.top2 { border-left: 5px solid var(--silver); }
-    .rank-item.top3 { border-left: 5px solid var(--bronze); }
+    .rank-item:last-child { border-bottom: none; }
+    .rank-item:hover { background: #f9fafb; }
     
     .rank-number {
-      width: 40px;
-      height: 40px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 16px;
+      font-size: 14px;
       background: #f3f4f6;
       color: var(--text-secondary);
       flex-shrink: 0;
     }
     
-    .rank-number.medal {
-      font-size: 28px;
-      background: transparent;
-    }
+    .rank-number.top1 { background: var(--gold); color: #fff; }
+    .rank-number.top2 { background: var(--silver); color: #fff; }
+    .rank-number.top3 { background: var(--bronze); color: #fff; }
     
     .rank-info {
       flex: 1;
@@ -219,12 +278,9 @@
       margin-bottom: 4px;
     }
     
-    .rank-meta {
+    .rank-type {
       font-size: 12px;
       color: var(--text-secondary);
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
     }
     
     .rank-bar-track {
@@ -247,13 +303,12 @@
     }
     
     .rank-rate-value {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
     }
     
     .rank-rate-value.success { color: var(--success); }
     .rank-rate-value.danger { color: var(--danger); }
-    .rank-rate-value.primary { color: var(--primary); }
     
     .rank-gap {
       font-size: 12px;
@@ -283,21 +338,22 @@
     
     @media (max-width: 640px) {
       h1 { font-size: 24px; }
-      .champion-name { font-size: 26px; }
-      .champion-rate { font-size: 38px; }
+      .group-champion { flex-direction: column; text-align: center; }
+      .champion-medal { font-size: 48px; }
+      .champion-dept { font-size: 22px; }
+      .champion-rate { font-size: 30px; }
       .rank-item { padding: 14px 16px; gap: 12px; }
-      .rank-number { width: 34px; height: 34px; font-size: 14px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>🏆 Q3 季度目标完成 PK 榜</h1>
+      <h1>🏆 Q3 季度团队 PK 榜</h1>
       <div class="subtitle">
         <span><span class="live-dot"></span> 实时同步自 Google Sheets</span>
         <span>·</span>
-        <span>仅展示完成率与进度</span>
+        <span>按组别 PK，每组选一个冠军</span>
       </div>
     </header>
 
@@ -311,21 +367,15 @@
       </div>
     </section>
 
-    <section id="championSection" style="display: none;">
-      <div class="champion-card">
-        <div class="champion-label">当前冠军</div>
-        <div class="champion-name" id="championName">--</div>
-        <div class="champion-group" id="championGroup">--</div>
-        <div class="champion-rate" id="championRate">--</div>
-        <div class="champion-gap" id="championGap">--</div>
+    <section>
+      <div class="ranking-title" style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">🎯 奖项推荐结果</div>
+      <div class="awards-summary" id="awardsSummary">
+        <!-- 动态生成 -->
       </div>
     </section>
 
-    <main>
-      <div class="ranking-title">📊 完整排行榜</div>
-      <div id="rankingList">
-        <div class="status">数据加载中...</div>
-      </div>
+    <main id="groupsContainer">
+      <div class="status">数据加载中...</div>
     </main>
 
     <div class="last-update" id="lastUpdate"></div>
@@ -336,6 +386,12 @@
     
     const Q3_START = '2026-07-01';
     const Q3_END = '2026-09-30';
+    
+    const GROUP_CONFIG = {
+      '效果营销中心': { award: '卓越增长团队奖', bonus: '5000元' },
+      '品牌/SEO': { award: '卓越经营团队奖', bonus: '3000元' },
+      '销售/客户成功': { award: '增长协同团队奖', bonus: '3000元' }
+    };
     
     function formatPercent(value) {
       if (value === null || value === undefined || isNaN(value)) return '--';
@@ -357,57 +413,70 @@
       return progress;
     }
     
-    function getMedal(rank) {
-      if (rank === 1) return '🥇';
-      if (rank === 2) return '🥈';
-      if (rank === 3) return '🥉';
-      return String(rank);
+    function renderAwardsSummary(groups, timeProgress) {
+      const container = document.getElementById('awardsSummary');
+      container.innerHTML = '';
+      
+      Object.entries(groups).forEach(([groupName, items]) => {
+        const sorted = [...items].sort((a, b) => Number(b['完成率']) - Number(a['完成率']));
+        const winner = sorted[0];
+        const config = GROUP_CONFIG[groupName] || { award: groupName + '冠军', bonus: '' };
+        
+        const card = document.createElement('div');
+        card.className = 'award-summary-card';
+        card.innerHTML = `
+          <div class="award-name">${config.award}</div>
+          <div class="award-winner">${winner['部门']}</div>
+          <div class="award-bonus">奖金：${config.bonus}</div>
+        `;
+        container.appendChild(card);
+      });
     }
     
-    function renderChampion(winner) {
-      const section = document.getElementById('championSection');
-      document.getElementById('championName').textContent = winner['部门'];
-      document.getElementById('championGroup').textContent = winner['组别'] + ' · ' + winner['指标类型'];
-      document.getElementById('championRate').textContent = formatPercent(winner['完成率']);
-      
+    function renderGroupChampion(winner, config, timeProgress) {
+      const rate = Number(winner['完成率']) || 0;
       const gap = Number(winner['与时间进度差距']) || 0;
+      const isAhead = rate >= timeProgress;
       const gapText = gap >= 0 
         ? `领先时间进度 ${formatPercent(gap)}` 
         : `落后时间进度 ${formatPercent(Math.abs(gap))}`;
-      document.getElementById('championGap').textContent = gapText;
       
-      section.style.display = 'block';
+      return `
+        <div class="group-champion">
+          <div class="champion-medal">🥇</div>
+          <div class="champion-info">
+            <div class="champion-label">该组冠军 / 推荐获奖</div>
+            <div class="champion-dept">${winner['部门']}</div>
+            <div class="champion-meta">${winner['指标类型']} · ${config.award}</div>
+            <div>
+              <span class="champion-rate">${formatPercent(rate)}</span>
+              <span class="champion-gap" style="color: ${isAhead ? 'var(--success)' : 'var(--danger)'}">${gapText}</span>
+            </div>
+          </div>
+        </div>
+      `;
     }
     
-    function renderRanking(rows, timeProgress) {
-      const sorted = [...rows].sort((a, b) => Number(b['完成率']) - Number(a['完成率']));
-      const list = document.getElementById('rankingList');
-      list.innerHTML = '';
+    function renderRankItem(item, rank, timeProgress) {
+      const rate = Number(item['完成率']) || 0;
+      const gap = Number(item['与时间进度差距']) || 0;
+      const isAhead = rate >= timeProgress;
+      const rateClass = isAhead ? 'success' : 'danger';
+      const gapClass = isAhead ? 'success' : 'danger';
+      const barColor = isAhead ? 'var(--success)' : 'var(--primary)';
+      const gapSymbol = gap >= 0 ? '+' : '-';
       
-      sorted.forEach((item, index) => {
-        const rank = index + 1;
-        const rate = Number(item['完成率']) || 0;
-        const gap = Number(item['与时间进度差距']) || 0;
-        const isAhead = rate >= timeProgress;
-        const rateClass = isAhead ? 'success' : 'danger';
-        const gapClass = isAhead ? 'success' : 'danger';
-        const barColor = isAhead ? 'var(--success)' : 'var(--primary)';
-        const gapSymbol = gap >= 0 ? '+' : '-';
-        
-        const medal = getMedal(rank);
-        const isTop3 = rank <= 3;
-        
-        const itemEl = document.createElement('div');
-        itemEl.className = `rank-item ${isTop3 ? 'top' + rank : ''}`;
-        itemEl.innerHTML = `
-          <div class="rank-number ${isTop3 ? 'medal' : ''}">${medal}</div>
+      let rankClass = '';
+      if (rank === 1) rankClass = 'top1';
+      else if (rank === 2) rankClass = 'top2';
+      else if (rank === 3) rankClass = 'top3';
+      
+      return `
+        <div class="rank-item">
+          <div class="rank-number ${rankClass}">${rank}</div>
           <div class="rank-info">
             <div class="rank-dept">${item['部门']}</div>
-            <div class="rank-meta">
-              <span>${item['组别']}</span>
-              <span>·</span>
-              <span>${item['指标类型']}</span>
-            </div>
+            <div class="rank-type">${item['指标类型']}</div>
             <div class="rank-bar-track">
               <div class="rank-bar-fill" style="width: ${Math.min(rate * 100, 100)}%; background: ${barColor}"></div>
             </div>
@@ -416,8 +485,44 @@
             <div class="rank-rate-value ${rateClass}">${formatPercent(rate)}</div>
             <div class="rank-gap ${gapClass}">${gapSymbol}${formatPercent(Math.abs(gap))}</div>
           </div>
+        </div>
+      `;
+    }
+    
+    function renderGroups(rows, timeProgress) {
+      // 按组别分组
+      const groups = {};
+      rows.forEach(row => {
+        const group = row['组别'] || '其他';
+        if (!groups[group]) groups[group] = [];
+        groups[group].push(row);
+      });
+      
+      // 按组别在数据中首次出现的顺序
+      const groupOrder = [...new Set(rows.map(r => r['组别'] || '其他'))];
+      
+      const container = document.getElementById('groupsContainer');
+      container.innerHTML = '';
+      
+      groupOrder.forEach(groupName => {
+        const items = groups[groupName];
+        const sorted = [...items].sort((a, b) => Number(b['完成率']) - Number(a['完成率']));
+        const winner = sorted[0];
+        const config = GROUP_CONFIG[groupName] || { award: groupName + '冠军', bonus: '' };
+        
+        const section = document.createElement('section');
+        section.className = 'group-section';
+        section.innerHTML = `
+          <div class="group-header">
+            <div class="group-title">${groupName}</div>
+            <div class="group-award">${config.award} · ${config.bonus}</div>
+          </div>
+          ${renderGroupChampion(winner, config, timeProgress)}
+          <div class="rank-list">
+            ${sorted.map((item, index) => renderRankItem(item, index + 1, timeProgress)).join('')}
+          </div>
         `;
-        list.appendChild(itemEl);
+        container.appendChild(section);
       });
     }
     
@@ -428,22 +533,29 @@
         
         if (data.error) throw new Error(data.error);
         if (!Array.isArray(data) || data.length === 0) {
-          document.getElementById('rankingList').innerHTML = '<div class="status">暂无数据</div>';
+          document.getElementById('groupsContainer').innerHTML = '<div class="status">暂无数据</div>';
           return;
         }
         
         const timeProgress = renderTimeProgress();
-        const sorted = [...data].sort((a, b) => Number(b['完成率']) - Number(a['完成率']));
         
-        renderChampion(sorted[0]);
-        renderRanking(data, timeProgress);
+        // 按组别分组用于奖项汇总
+        const groups = {};
+        data.forEach(row => {
+          const group = row['组别'] || '其他';
+          if (!groups[group]) groups[group] = [];
+          groups[group].push(row);
+        });
+        
+        renderAwardsSummary(groups, timeProgress);
+        renderGroups(data, timeProgress);
         
         const now = new Date();
         document.getElementById('lastUpdate').textContent = 
           '最后更新：' + now.toLocaleString('zh-CN');
         
       } catch (err) {
-        document.getElementById('rankingList').innerHTML = 
+        document.getElementById('groupsContainer').innerHTML = 
           `<div class="status error">数据加载失败：${err.message}<br>请检查 API_URL 和 Apps Script 权限设置。</div>`;
         console.error(err);
       }
