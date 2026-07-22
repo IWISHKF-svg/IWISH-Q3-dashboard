@@ -610,7 +610,9 @@
         section.innerHTML = `
           <div class="group-header">
             <div class="group-title">${groupName}</div>
-            <div class="group-award">${config.award} · ${config.bonus}</div>
+            <div class="group-award">
+  ${config.award}${config.bonus ? ' · ' + config.bonus : ''}
+</div>
           </div>
           ${note ? `<div class="group-note">💡 ${note}</div>` : ''}
           ${renderGroupChampion(winner, config, timeProgress)}
