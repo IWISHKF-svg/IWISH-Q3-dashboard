@@ -1,494 +1,1219 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IWISH - Q3 季度团队 PK 榜</title>
-  <style>
-    * { box-sizing: border-box; }
-    
-    :root {
-      --bg: #f3f4f6;
-      --card: #ffffff;
-      --text: #111827;
-      --text-secondary: #6b7280;
-      --success: #10b981;
-      --danger: #ef4444;
-      --primary: #3b82f6;
-      --gold: #f59e0b;
-      --silver: #9ca3af;
-      --bronze: #b45309;
-      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 32px 16px;
-      line-height: 1.5;
-    }
-    
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    
-    header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-    
-    h1 {
-      font-size: 28px;
-      font-weight: 800;
-      margin: 0 0 8px 0;
-    }
-    
-    .subtitle {
-      color: var(--text-secondary);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--success);
-      border-radius: 50%;
-      display: inline-block;
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-    
-    .time-progress-card {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-      margin-bottom: 24px;
-    }
-    
-    .time-progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    
-    .time-progress-title { font-weight: 600; }
-    .time-progress-value { font-size: 18px; font-weight: 700; color: var(--primary); }
-    
-    .progress-bar {
-      height: 12px;
-      background: #e5e7eb;
-      border-radius: 6px;
-      overflow: hidden;
-    }
-    
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #60a5fa, #3b82f6);
-      border-radius: 6px;
-      transition: width 0.8s ease;
-    }
-    
-    .awards-summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-    
-    .award-summary-card {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-      border-top: 4px solid var(--gold);
-    }
-    
-    .award-summary-card:nth-child(2) { border-top-color: var(--silver); }
-    .award-summary-card:nth-child(3) { border-top-color: var(--bronze); }
-    
-    .award-name {
-      font-size: 13px;
-      color: var(--text-secondary);
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    
-    .award-winner {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--text);
-      margin-bottom: 4px;
-    }
-    
-    .award-bonus {
-      font-size: 14px;
-      color: var(--gold);
-      font-weight: 700;
-    }
-    
-    .group-section {
-      margin-bottom: 40px;
-    }
-    
-    .group-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      padding: 0 4px;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    
-    .group-title {
-      font-size: 20px;
-      font-weight: 800;
-    }
-    
-    .group-award {
-      font-size: 13px;
-      color: var(--text-secondary);
-      background: #f3f4f6;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-    }
-    
-    .group-note {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 16px;
-      padding: 0 4px;
-      font-style: italic;
-    }
-    
-    .group-champion {
-      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-      border: 2px solid var(--gold);
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      box-shadow: var(--shadow);
-    }
-    
-    .champion-medal {
-      font-size: 56px;
-      flex-shrink: 0;
-    }
-    
-    .champion-info {
-      flex: 1;
-    }
-    
-    .champion-label {
-      font-size: 13px;
-      color: #92400e;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    
-    .champion-dept {
-      font-size: 26px;
-      font-weight: 800;
-      color: #78350f;
-      margin-bottom: 6px;
-    }
-    
-    .champion-meta {
-      font-size: 14px;
-      color: #92400e;
-      margin-bottom: 10px;
-    }
-    
-    .champion-rate {
-      font-size: 36px;
-      font-weight: 800;
-      color: var(--gold);
-    }
-    
-    .champion-gap {
-      display: inline-block;
-      margin-left: 10px;
-      padding: 4px 10px;
-      background: #fff;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 700;
-    }
-    
-    .champion-extra {
-      margin-top: 14px;
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    
-    .champion-extra-item {
-      background: #fff;
-      padding: 10px 14px;
-      border-radius: 12px;
-      min-width: 100px;
-    }
-    
-    .champion-extra-label {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-bottom: 2px;
-    }
-    
-    .champion-extra-value {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    
-    .rank-list {
-      background: var(--card);
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    
-    .rank-item {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
-      border-bottom: 1px solid #f3f4f6;
-      transition: background 0.15s ease;
-    }
-    
-    .rank-item:last-child { border-bottom: none; }
-    .rank-item:hover { background: #f9fafb; }
-    
-    .rank-number {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 14px;
-      background: #f3f4f6;
-      color: var(--text-secondary);
-      flex-shrink: 0;
-    }
-    
-    .rank-number.top1 { background: var(--gold); color: #fff; }
-    .rank-number.top2 { background: var(--silver); color: #fff; }
-    .rank-number.top3 { background: var(--bronze); color: #fff; }
-    
-    .rank-info {
-      flex: 1;
-      min-width: 0;
-    }
-    
-    .rank-dept {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    
-    .rank-type {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-    }
-    
-    .rank-extra {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-    
-    .rank-extra span {
-      background: #f3f4f6;
-      padding: 4px 10px;
-      border-radius: 8px;
-    }
-    
-    .rank-bar-track {
-      height: 8px;
-      background: #e5e7eb;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
-    
-    .rank-bar-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.8s ease;
-    }
-    
-    .rank-rate {
-      text-align: right;
-      min-width: 80px;
-    }
-    
-    .rank-rate-value {
-      font-size: 20px;
-      font-weight: 800;
-    }
-    
-    .rank-rate-value.success { color: var(--success); }
-    .rank-rate-value.danger { color: var(--danger); }
-    
-    .rank-gap {
-      font-size: 12px;
-      margin-top: 4px;
-      font-weight: 600;
-    }
-    
-    .rank-gap.success { color: var(--success); }
-    .rank-gap.danger { color: var(--danger); }
-    
-    .status {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-secondary);
-    }
-    
-    .status.error {
-      color: var(--danger);
-    }
-    
-    .last-update {
-      text-align: center;
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 32px;
-    }
-    
-    @media (max-width: 640px) {
-      h1 { font-size: 24px; }
-      .group-champion { flex-direction: column; text-align: center; }
-      .champion-medal { font-size: 48px; }
-      .champion-dept { font-size: 22px; }
-      .champion-rate { font-size: 30px; }
-      .champion-extra { justify-content: center; }
-      .rank-item { padding: 14px 16px; gap: 12px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>IWISH - 🏆 Q3 季度团队 PK 榜</h1>
-      <div class="subtitle">
-        <span><span class="live-dot"></span> 实时同步自 Google Sheets</span>
-        <span>·</span>
-        <span>按组别 PK，每组选一个冠军</span>
-      </div>
-    </header>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <section class="time-progress-card">
-      <div class="time-progress-header">
-        <span class="time-progress-title">⏱ 时间进度</span>
-        <span class="time-progress-value" id="timeRate">--</span>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="timeFill" style="width: 0%"></div>
-      </div>
-    </section>
+<title>IWISH - Q3 季度团队 PK 榜</title>
 
-    <section>
-      <div style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">🎯 当前领先团队</div>
-      <div class="awards-summary" id="awardsSummary"></div>
-    </section>
+<style>
 
-    <main id="groupsContainer">
-      <div class="status">数据加载中...</div>
-    </main>
-
-    <div class="last-update" id="lastUpdate"></div>
-  </div>
-
-  <script>
-
-const API_URL = 'https://script.google.com/macros/s/AKfycbxzQoC3fnu9hfWW5A38u7kvyJRaTyd0nzKpJu03bk8xBcmL0tOKd_DfZeW0yx7WqyZN/exec';
+*{
+box-sizing:border-box;
+}
 
 
-const Q3_START = '2026-07-01';
-const Q3_TOTAL_DAYS = 92;
+:root{
 
+--bg:#f3f4f6;
+--card:#ffffff;
+--text:#111827;
+--text-secondary:#6b7280;
 
-const GROUP_CONFIG = {
+--success:#10b981;
+--danger:#ef4444;
+--primary:#3b82f6;
 
-  '效果营销中心': {
-    award:'卓越增长团队奖',
-    bonus:''
-  },
+--gold:#f59e0b;
+--silver:#9ca3af;
+--bronze:#b45309;
 
-  '品牌/SEO':{
-    award:'卓越经营团队奖',
-    bonus:''
-  },
-
-  '销售/客户成功':{
-    award:'增长协同团队奖',
-    bonus:''
-  }
-
-};
-
-
-
-function formatPercent(value){
-
-  if(value===undefined || value===null || value===''){
-    return '--';
-  }
-
-
-  if(typeof value==='string' && value.includes('%')){
-    return value;
-  }
-
-
-  return (Number(value)*100).toFixed(2)+'%';
+--shadow:
+0 1px 3px rgba(0,0,0,.08),
+0 4px 12px rgba(0,0,0,.05);
 
 }
 
 
 
+body{
+
+font-family:
+-apple-system,
+BlinkMacSystemFont,
+"Segoe UI",
+Roboto,
+"Helvetica Neue",
+Arial,
+sans-serif;
+
+background:var(--bg);
+
+color:var(--text);
+
+margin:0;
+
+padding:32px 16px;
+
+line-height:1.5;
+
+}
+
+
+
+.container{
+
+max-width:900px;
+
+margin:auto;
+
+}
+
+
+
+header{
+
+text-align:center;
+
+margin-bottom:32px;
+
+}
+
+
+
+h1{
+
+font-size:28px;
+
+font-weight:800;
+
+margin:0 0 8px;
+
+}
+
+
+
+.subtitle{
+
+color:var(--text-secondary);
+
+font-size:14px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:12px;
+
+flex-wrap:wrap;
+
+}
+
+
+
+.live-dot{
+
+width:8px;
+
+height:8px;
+
+background:var(--success);
+
+border-radius:50%;
+
+display:inline-block;
+
+animation:pulse 2s infinite;
+
+}
+
+
+@keyframes pulse{
+
+0%,100%{
+opacity:1;
+}
+
+50%{
+opacity:.4;
+}
+
+}
+
+
+
+/* 时间进度 */
+
+.time-progress-card{
+
+background:var(--card);
+
+border-radius:16px;
+
+padding:20px;
+
+box-shadow:var(--shadow);
+
+margin-bottom:24px;
+
+}
+
+
+
+.time-progress-header{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-bottom:10px;
+
+}
+
+
+.time-progress-title{
+
+font-weight:600;
+
+}
+
+
+.time-progress-value{
+
+font-size:18px;
+
+font-weight:700;
+
+color:var(--primary);
+
+}
+
+
+.progress-bar{
+
+height:12px;
+
+background:#e5e7eb;
+
+border-radius:6px;
+
+overflow:hidden;
+
+}
+
+
+.progress-fill{
+
+height:100%;
+
+background:linear-gradient(
+90deg,
+#60a5fa,
+#3b82f6
+);
+
+border-radius:6px;
+
+}
+
+
+
+/* 评分规则 */
+
+
+.rule-card{
+
+background:var(--card);
+
+border-radius:16px;
+
+padding:24px;
+
+box-shadow:var(--shadow);
+
+margin-bottom:24px;
+
+}
+
+
+
+.rule-title{
+
+font-size:20px;
+
+font-weight:800;
+
+margin-bottom:20px;
+
+}
+
+
+
+.rule-content{
+
+display:flex;
+
+flex-direction:column;
+
+gap:16px;
+
+}
+
+
+
+.rule-item{
+
+background:#f9fafb;
+
+border-radius:12px;
+
+padding:16px;
+
+}
+
+
+
+.rule-item strong{
+
+font-size:15px;
+
+}
+
+
+
+.rule-item p{
+
+font-size:13px;
+
+color:var(--text-secondary);
+
+line-height:1.8;
+
+margin:8px 0 0;
+
+}
+
+
+
+.rule-footer{
+
+margin-top:8px;
+
+padding-top:12px;
+
+border-top:1px solid #e5e7eb;
+
+font-size:13px;
+
+font-weight:600;
+
+color:var(--primary);
+
+}
+
+
+
+/* 当前领先 */
+
+
+.awards-summary{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(260px,1fr));
+
+gap:16px;
+
+margin-bottom:32px;
+
+}
+
+
+
+.award-summary-card{
+
+background:var(--card);
+
+border-radius:16px;
+
+padding:20px;
+
+box-shadow:var(--shadow);
+
+border-top:4px solid var(--gold);
+
+}
+
+
+.award-summary-card:nth-child(2){
+
+border-top-color:var(--silver);
+
+}
+
+
+.award-summary-card:nth-child(3){
+
+border-top-color:var(--bronze);
+
+}
+
+
+
+.award-name{
+
+font-size:13px;
+
+color:var(--text-secondary);
+
+font-weight:600;
+
+}
+
+
+
+.award-winner{
+
+font-size:20px;
+
+font-weight:800;
+
+margin-top:6px;
+
+}
+
+
+.award-bonus{
+
+font-size:14px;
+
+color:var(--gold);
+
+font-weight:700;
+
+margin-top:4px;
+
+}
+
+
+
+/* 分组 */
+
+
+.group-section{
+
+margin-bottom:40px;
+
+}
+
+
+
+.group-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:8px;
+
+}
+
+
+
+.group-title{
+
+font-size:20px;
+
+font-weight:800;
+
+}
+
+
+.group-award{
+
+font-size:13px;
+
+background:#f3f4f6;
+
+padding:6px 12px;
+
+border-radius:20px;
+
+font-weight:600;
+
+color:var(--text-secondary);
+
+}
+
+
+
+/* 冠军 */
+
+
+.group-champion{
+
+background:
+linear-gradient(
+135deg,
+#fffbeb,
+#fef3c7
+);
+
+border:2px solid var(--gold);
+
+border-radius:20px;
+
+padding:24px;
+
+display:flex;
+
+gap:20px;
+
+align-items:center;
+
+margin-bottom:16px;
+
+box-shadow:var(--shadow);
+
+}
+
+
+
+.champion-medal{
+
+font-size:56px;
+
+}
+
+
+.champion-dept{
+
+font-size:26px;
+
+font-weight:800;
+
+color:#78350f;
+
+}
+
+
+
+.champion-rate{
+
+font-size:36px;
+
+font-weight:800;
+
+color:var(--gold);
+
+}
+
+
+
+.champion-extra{
+
+display:flex;
+
+gap:12px;
+
+flex-wrap:wrap;
+
+margin-top:14px;
+
+}
+
+
+
+.champion-extra-item{
+
+background:#fff;
+
+padding:10px 14px;
+
+border-radius:12px;
+
+}
+
+
+
+.champion-extra-label{
+
+font-size:12px;
+
+color:var(--text-secondary);
+
+}
+
+
+
+.champion-extra-value{
+
+font-size:18px;
+
+font-weight:700;
+
+color:var(--primary);
+
+}
+.rank-list{
+
+background:var(--card);
+
+border-radius:16px;
+
+box-shadow:var(--shadow);
+
+overflow:hidden;
+
+}
+
+
+
+.rank-item{
+
+display:flex;
+
+align-items:center;
+
+gap:16px;
+
+padding:16px 20px;
+
+border-bottom:1px solid #f3f4f6;
+
+}
+
+
+
+.rank-item:last-child{
+
+border-bottom:none;
+
+}
+
+
+
+.rank-number{
+
+width:32px;
+
+height:32px;
+
+border-radius:50%;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+background:#f3f4f6;
+
+font-weight:800;
+
+}
+
+
+
+.rank-number.top1{
+
+background:var(--gold);
+
+color:white;
+
+}
+
+
+.rank-number.top2{
+
+background:var(--silver);
+
+color:white;
+
+}
+
+
+.rank-number.top3{
+
+background:var(--bronze);
+
+color:white;
+
+}
+
+
+
+.rank-info{
+
+flex:1;
+
+}
+
+
+
+.rank-dept{
+
+font-size:16px;
+
+font-weight:700;
+
+}
+
+
+
+.rank-type{
+
+font-size:12px;
+
+color:var(--text-secondary);
+
+margin-bottom:8px;
+
+}
+
+
+
+.rank-extra{
+
+display:flex;
+
+gap:8px;
+
+flex-wrap:wrap;
+
+}
+
+
+
+.rank-extra span{
+
+font-size:12px;
+
+background:#f3f4f6;
+
+padding:4px 10px;
+
+border-radius:8px;
+
+}
+
+
+
+.rank-bar-track{
+
+height:8px;
+
+background:#e5e7eb;
+
+border-radius:4px;
+
+margin-top:10px;
+
+overflow:hidden;
+
+}
+
+
+.rank-bar-fill{
+
+height:100%;
+
+border-radius:4px;
+
+}
+
+
+
+.rank-rate{
+
+text-align:right;
+
+min-width:80px;
+
+}
+
+
+
+.rank-rate-value{
+
+font-size:20px;
+
+font-weight:800;
+
+color:var(--success);
+
+}
+
+
+
+.status{
+
+text-align:center;
+
+padding:60px 20px;
+
+color:var(--text-secondary);
+
+}
+
+
+
+.status.error{
+
+color:var(--danger);
+
+}
+
+
+
+.last-update{
+
+text-align:center;
+
+font-size:12px;
+
+color:var(--text-secondary);
+
+margin-top:32px;
+
+}
+
+
+
+@media(max-width:640px){
+
+.group-champion{
+
+flex-direction:column;
+
+text-align:center;
+
+}
+
+
+.champion-dept{
+
+font-size:22px;
+
+}
+
+
+.champion-rate{
+
+font-size:30px;
+
+}
+
+
+.rank-item{
+
+padding:14px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<header>
+
+<h1>
+IWISH - 🏆 Q3 季度团队 PK 榜
+</h1>
+
+
+<div class="subtitle">
+
+<span>
+<span class="live-dot"></span>
+实时同步自 Google Sheets
+</span>
+
+
+<span>·</span>
+
+
+<span>
+按组别 PK，每组选一个冠军
+</span>
+
+
+</div>
+
+
+</header>
+
+
+
+
+
+<section class="time-progress-card">
+
+
+<div class="time-progress-header">
+
+<span class="time-progress-title">
+⏱ 时间进度
+</span>
+
+
+<span class="time-progress-value" id="timeRate">
+--
+</span>
+
+
+</div>
+
+
+
+<div class="progress-bar">
+
+<div 
+class="progress-fill"
+id="timeFill"
+style="width:0%">
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+<section class="rule-card">
+
+
+<div class="rule-title">
+
+📖 Q3团队PK评分规则
+
+</div>
+
+
+
+<div class="rule-content">
+
+
+
+<div class="rule-item">
+
+<strong>
+🏆 效果营销中心（毛利目标）
+</strong>
+
+
+<p>
+综合得分 = 毛利完成得分 + 增长表现得分
+</p>
+
+
+<p>
+
+① 毛利完成得分（50分）：
+<br>
+
+毛利完成率最高团队获得50分，第二名获得45分，第三名获得40分。
+<br>
+
+计算。
+
+</p>
+
+
+
+<p>
+
+② 增长表现得分（50分）：
+<br>
+
+根据Q3较Q2经营变化情况评分。
+<br>
+
+经营变化表现最佳团队获得50分，第二名获得45分，第三名获得40分。
+<br>
+
+若全部团队均为负增长，则下降幅度最小团队获得最高分。
+
+</p>
+
+
+</div>
+
+
+
+
+
+<div class="rule-item">
+
+
+<strong>
+🏆 品牌/SEO（服务费目标）
+</strong>
+
+
+<p>
+
+综合得分 = 服务费完成率评分
+
+</p>
+
+
+<p>
+
+服务费完成率最高团队获得100分，第二名获得95分。
+
+<br>
+当前先只看服务费，等季度末再结合利润。
+
+</p>
+
+
+</div>
+
+
+
+
+
+<div class="rule-item">
+
+
+<strong>
+🏆 销售/客户成功（服务费目标）
+</strong>
+
+
+<p>
+
+综合得分 = 新单完成得分 + 续费完成得分
+
+</p>
+
+
+<p>
+
+① 新单完成得分（80分）：
+<br>
+
+根据季度新单目标完成情况评分。
+<br>
+
+新单完成率最高团队获得80分，第二名获得75分。
+
+</p>
+
+
+<p>
+
+② 续费完成得分（20分）：
+<br>
+
+根据季度续费目标完成情况评分。
+<br>
+
+续费完成率最高团队获得20分，第二名获得15分。
+
+
+</p>
+
+
+
+
+<div class="rule-footer">
+
+⭐ 综合得分越高，团队排名越靠前
+
+</div>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+<section>
+
+
+<div style="
+font-size:18px;
+font-weight:700;
+margin-bottom:16px;
+">
+
+🎯 当前领先团队
+
+</div>
+
+
+
+<div 
+class="awards-summary"
+id="awardsSummary">
+</div>
+
+
+</section>
+
+
+
+
+
+<main id="groupsContainer">
+
+<div class="status">
+
+数据加载中...
+
+</div>
+
+
+</main>
+
+
+
+
+<div 
+class="last-update"
+id="lastUpdate">
+
+</div>
+
+
+
+</div>
+
+
+
+<script>
+
+
+const API_URL =
+'https://script.google.com/macros/s/AKfycbxzQoC3fnu9hfWW5A38u7kvyJRaTyd0nzKpJu03bk8xBcmL0tOKd_DfZeW0yx7WqyZN/exec';
+
+
+
+const Q3_START='2026-07-01';
+
+const Q3_TOTAL_DAYS=92;
+
+
+
+const GROUP_CONFIG={
+
+
+'效果营销中心':{
+
+award:'卓越增长团队奖',
+
+bonus:''
+
+},
+
+
+
+'品牌/SEO':{
+
+award:'卓越经营团队奖',
+
+bonus:''
+
+},
+
+
+
+'销售/客户成功':{
+
+award:'增长协同团队奖',
+
+bonus:''
+
+}
+
+
+};
+
+
+
+
+function formatPercent(value){
+
+
+if(
+value===undefined ||
+value===null ||
+value===''
+){
+
+return '--';
+
+}
+
+
+
+if(
+typeof value==='string'
+&&
+value.includes('%')
+){
+
+return value;
+
+}
+
+
+
+return (
+Number(value)*100
+).toFixed(2)+'%';
+
+
+}
+
 function getTimeProgress(){
 
-  const start=new Date(Q3_START);
-  const now=new Date();
 
-  const days=Math.floor(
-    (now-start)/(1000*60*60*24)
-  )+1;
+const start=new Date(Q3_START);
+
+const now=new Date();
 
 
-  return Math.max(
-    0,
-    Math.min(
-      1,
-      days/Q3_TOTAL_DAYS
-    )
-  );
+const days=Math.floor(
+(now-start)/
+(1000*60*60*24)
+)+1;
+
+
+
+return Math.max(
+0,
+Math.min(
+1,
+days/Q3_TOTAL_DAYS
+)
+);
+
 
 }
 
@@ -497,155 +1222,180 @@ function getTimeProgress(){
 
 function renderTimeProgress(){
 
- const progress=getTimeProgress();
+
+const progress=getTimeProgress();
 
 
- document.getElementById('timeRate')
- .textContent=formatPercent(progress);
+document.getElementById('timeRate')
+.textContent=
+formatPercent(progress);
 
 
- document.getElementById('timeFill')
- .style.width=(progress*100)+'%';
+
+document.getElementById('timeFill')
+.style.width=
+(progress*100)+'%';
 
 
- return progress;
+
+return progress;
 
 }
 
 
 
 
-// 根据组别显示评分
+
 function renderScoreMetrics(item){
 
- let metrics=[];
+
+let metrics=[];
 
 
- const group=item['组别'];
-
-
-// 效果营销中心
- if(group==='效果营销中心'){
-
-   metrics=[
-
-     {
-       label:'毛利完成率',
-       value:formatPercent(item['完成率'])
-     },
-
-     {
-       label:'Q3较Q2增长率',
-       value:formatPercent(item['Q3较Q2增长率'])
-     },
-
-     {
-       label:'毛利完成得分',
-       value:Number(item['毛利完成得分']).toFixed(2)
-     },
-
-     {
-       label:'增长率得分',
-       value:Number(item['增长率得分']).toFixed(2)
-     },
-
-     {
-       label:'综合得分',
-       value:Number(item['综合得分']).toFixed(2)
-     }
-
-   ];
-
- }
+const group=item['组别'];
 
 
 
-// 品牌/SEO
- else if(group==='品牌/SEO'){
-
-   metrics=[
-
-     {
-       label:'服务费完成率',
-       value:formatPercent(item['完成率'])
-     },
-
-     {
-       label:'综合得分',
-       value:Number(item['综合得分']).toFixed(2)
-     }
-
-   ];
-
- }
+if(group==='效果营销中心'){
 
 
-
-// 销售/客户成功
- else if(group==='销售/客户成功'){
+metrics=[
 
 
-   metrics=[
-
-     {
-       label:'服务费完成率',
-       value:formatPercent(item['完成率'])
-     },
+{
+label:'毛利完成率',
+value:formatPercent(item['完成率'])
+},
 
 
-     {
-       label:'新单完成率',
-       value:formatPercent(item['新单完成率'])
-     },
+{
+label:'Q3较Q2变化',
+value:formatPercent(item['Q3较Q2增长率'])
+},
 
 
-     {
-       label:'续费完成率',
-       value:formatPercent(item['续费完成率'])
-     },
+{
+label:'毛利完成得分',
+value:Number(item['毛利完成得分']).toFixed(2)
+},
 
 
-     {
-       label:'新单完成得分',
-       value:Number(item['新单完成得分']).toFixed(2)
-     },
+{
+label:'增长表现得分',
+value:Number(item['增长率得分']).toFixed(2)
+},
 
 
-     {
-       label:'续费完成得分',
-       value:Number(item['续费完成得分']).toFixed(2)
-     },
+{
+label:'综合得分',
+value:Number(item['综合得分']).toFixed(2)
+}
 
 
-     {
-       label:'综合得分',
-       value:Number(item['综合得分']).toFixed(2)
-     }
+];
 
 
-   ];
+}
 
 
- }
+
+else if(group==='品牌/SEO'){
+
+
+metrics=[
+
+
+{
+label:'服务费完成率',
+value:formatPercent(item['完成率'])
+},
+
+
+{
+label:'综合得分',
+value:Number(item['综合得分']).toFixed(2)
+}
+
+
+];
+
+
+}
 
 
 
 
- return `
+else if(group==='销售/客户成功'){
+
+
+metrics=[
+
+
+{
+label:'服务费完成率',
+value:formatPercent(item['完成率'])
+},
+
+
+{
+label:'新单完成率',
+value:formatPercent(item['新单完成率'])
+},
+
+
+{
+label:'续费完成率',
+value:formatPercent(item['续费完成率'])
+},
+
+
+{
+label:'新单完成得分',
+value:Number(item['新单完成得分']).toFixed(2)
+},
+
+
+{
+label:'续费完成得分',
+value:Number(item['续费完成得分']).toFixed(2)
+},
+
+
+{
+label:'综合得分',
+value:Number(item['综合得分']).toFixed(2)
+}
+
+
+];
+
+
+}
+
+
+
+
+return `
 
 <div class="champion-extra">
+
 
 ${metrics.map(m=>`
 
 <div class="champion-extra-item">
 
+
 <div class="champion-extra-label">
+
 ${m.label}
+
 </div>
 
 
 <div class="champion-extra-value">
+
 ${m.value}
+
 </div>
 
 
@@ -653,6 +1403,7 @@ ${m.value}
 
 
 `).join('')}
+
 
 
 </div>
@@ -663,6 +1414,11 @@ ${m.value}
 }
 
 
+
+
+
+
+
 function renderRankExtra(item){
 
 
@@ -671,24 +1427,30 @@ const group=item['组别'];
 let metrics=[];
 
 
+
 if(group==='效果营销中心'){
 
+
 metrics=[
+
 
 {
 label:'毛利完成率',
 value:formatPercent(item['完成率'])
 },
 
+
 {
-label:'增长完成率',
+label:'Q3较Q2变化',
 value:formatPercent(item['Q3较Q2增长率'])
 },
+
 
 {
 label:'综合得分',
 value:Number(item['综合得分']).toFixed(1)
 }
+
 
 ];
 
@@ -696,20 +1458,24 @@ value:Number(item['综合得分']).toFixed(1)
 }
 
 
+
 else if(group==='品牌/SEO'){
 
 
 metrics=[
+
 
 {
 label:'服务费完成率',
 value:formatPercent(item['完成率'])
 },
 
+
 {
 label:'综合得分',
 value:Number(item['综合得分']).toFixed(1)
 }
+
 
 ];
 
@@ -723,20 +1489,24 @@ else if(group==='销售/客户成功'){
 
 metrics=[
 
+
 {
 label:'服务费完成率',
 value:formatPercent(item['完成率'])
 },
+
 
 {
 label:'新单完成率',
 value:formatPercent(item['新单完成率'])
 },
 
+
 {
 label:'续费完成率',
 value:formatPercent(item['续费完成率'])
 },
+
 
 {
 label:'综合得分',
@@ -751,17 +1521,113 @@ value:Number(item['综合得分']).toFixed(1)
 
 
 
+
 return `
 
 <div class="rank-extra">
 
+
 ${metrics.map(m=>`
 
 <span>
+
 ${m.label} ${m.value}
+
 </span>
 
+
 `).join('')}
+
+
+
+</div>
+
+`;
+
+}
+
+
+
+
+
+
+
+function renderGroupChampion(winner,config){
+
+
+
+const score=
+Number(winner['综合得分'])||0;
+
+
+
+return `
+
+
+<div class="group-champion">
+
+
+<div class="champion-medal">
+
+🥇
+
+</div>
+
+
+
+<div class="champion-info">
+
+
+<div>
+
+该组领先团队
+
+</div>
+
+
+
+<div class="champion-dept">
+
+${winner['部门']}
+
+</div>
+
+
+
+<div>
+
+${winner['指标类型']} · ${config.award}
+
+</div>
+
+
+
+<div>
+
+
+<span class="champion-rate">
+
+${score.toFixed(2)}
+
+</span>
+
+
+<span>
+
+综合得分
+
+</span>
+
+
+</div>
+
+
+
+${renderScoreMetrics(winner)}
+
+
+
+</div>
 
 
 </div>
@@ -769,95 +1635,6 @@ ${m.label} ${m.value}
 
 `;
 
-
-}
-
-
-
-function renderGroupChampion(winner,config,timeProgress){
-
-
- const score=
- Number(winner['综合得分'])||0;
-
-
- const rate=score/100;
-
-
- const gap=
- Number(winner['与时间进度差距'])||0;
-
-
-
- const isAhead=
- rate>=timeProgress;
-
-
-
- return `
-
- <div class="group-champion">
-
- <div class="champion-medal">
- 🥇
- </div>
-
-
- <div class="champion-info">
-
-
- <div class="champion-label">
- 该组领先团队
- </div>
-
-
- <div class="champion-dept">
- ${winner['部门']}
- </div>
-
-
-
- <div class="champion-meta">
-
- ${winner['指标类型']} · ${config.award}
-
- </div>
-
-
-
- <div>
-
- <span class="champion-rate">
-
- ${Number(score).toFixed(2)}
-
- </span>
-
-
- <span class="champion-gap">
-
- 综合得分
-
- </span>
-
-
- </div>
-
-
-
- ${renderScoreMetrics(winner)}
-
-
-
- </div>
-
-
- </div>
-
-
- `;
-
-
 }
 
 
@@ -866,94 +1643,110 @@ function renderGroupChampion(winner,config,timeProgress){
 
 
 
-function renderRankItem(item,rank,timeProgress){
+
+function renderRankItem(item,rank){
 
 
- const score=
- Number(item['综合得分'])||0;
-
-
- const rate=score/100;
-
-
- let rankClass='';
-
-
- if(rank===1) rankClass='top1';
- if(rank===2) rankClass='top2';
- if(rank===3) rankClass='top3';
+const score=
+Number(item['综合得分'])||0;
 
 
 
- return `
+let rankClass='';
 
 
- <div class="rank-item">
+if(rank===1) rankClass='top1';
 
+if(rank===2) rankClass='top2';
 
- <div class="rank-number ${rankClass}">
- ${rank}
- </div>
-
-
- <div class="rank-info">
-
-
- <div class="rank-dept">
- ${item['部门']}
- </div>
-
-
- <div class="rank-type">
- ${item['指标类型']}
- </div>
-
-
- ${renderRankExtra(item)}
-
-
-
- <div class="rank-bar-track">
-
- <div class="rank-bar-fill"
- style="
- width:${Math.min(score,100)}%;
- background:var(--success)
- ">
- </div>
-
- </div>
-
-
- </div>
+if(rank===3) rankClass='top3';
 
 
 
 
- <div class="rank-rate">
-
- <div class="rank-rate-value success">
-
- ${score.toFixed(2)}
-
- </div>
+return `
 
 
- <div class="rank-gap">
-
- 综合得分
-
- </div>
+<div class="rank-item">
 
 
- </div>
+<div class="rank-number ${rankClass}">
+
+${rank}
+
+</div>
 
 
- </div>
+
+<div class="rank-info">
 
 
- `;
+<div class="rank-dept">
 
+${item['部门']}
+
+</div>
+
+
+<div class="rank-type">
+
+${item['指标类型']}
+
+</div>
+
+
+
+${renderRankExtra(item)}
+
+
+
+<div class="rank-bar-track">
+
+
+<div class="rank-bar-fill"
+
+style="
+width:${Math.min(score,100)}%;
+background:var(--success)
+">
+
+</div>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+<div class="rank-rate">
+
+
+<div class="rank-rate-value">
+
+${score.toFixed(2)}
+
+</div>
+
+
+<div>
+
+综合得分
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+`;
 
 }
 
@@ -963,120 +1756,224 @@ function renderRankItem(item,rank,timeProgress){
 
 
 
-function renderGroups(rows,timeProgress){
-
-
- const groups={};
-
-
- rows.forEach(row=>{
-
- let g=row['组别']||'其他';
-
- if(!groups[g]){
-   groups[g]=[];
- }
-
- groups[g].push(row);
-
-
- });
+function renderGroups(rows){
 
 
 
- const container=
- document.getElementById('groupsContainer');
-
-
- container.innerHTML='';
+const groups={};
 
 
 
- Object.entries(groups).forEach(([group,items])=>{
+rows.forEach(row=>{
 
 
- const sorted=[...items].sort(
- (a,b)=>
- Number(b['综合得分'])-
- Number(a['综合得分'])
- );
+const g=row['组别']||'其他';
 
 
- const winner=sorted[0];
+if(!groups[g]){
+
+groups[g]=[];
+
+}
 
 
- const config=
- GROUP_CONFIG[group]||{
- award:group,
- bonus:''
- };
+groups[g].push(row);
 
 
-
- const section=document.createElement('section');
-
- section.className='group-section';
+});
 
 
 
- section.innerHTML=`
-
-
- <div class="group-header">
-
- <div class="group-title">
- ${group}
- </div>
-
-
- <div class="group-award">
-
- ${config.award}
- ·
- ${config.bonus}
-
- </div>
-
-
- </div>
-
-
- ${renderGroupChampion(
- winner,
- config,
- timeProgress
- )}
+const container=
+document.getElementById('groupsContainer');
 
 
 
- <div class="rank-list">
-
- ${sorted.map(
- (item,index)=>
- renderRankItem(
- item,
- index+1,
- timeProgress
- )
- ).join('')}
-
-
- </div>
-
-
- `;
-
-
- container.appendChild(section);
+container.innerHTML='';
 
 
 
- });
+Object.entries(groups)
+.forEach(([group,items])=>{
+
+
+
+const sorted=
+[...items].sort(
+(a,b)=>
+Number(b['综合得分'])-
+Number(a['综合得分'])
+);
+
+
+
+const winner=sorted[0];
+
+
+
+const config=
+GROUP_CONFIG[group]||
+{
+award:group,
+bonus:''
+};
+
+
+
+const section=
+document.createElement('section');
+
+
+section.className='group-section';
+
+
+
+section.innerHTML=`
+
+
+<div class="group-header">
+
+
+<div class="group-title">
+
+${group}
+
+</div>
+
+
+<div class="group-award">
+
+${config.award}
+
+</div>
+
+
+</div>
+
+
+
+${renderGroupChampion(
+winner,
+config
+)}
+
+
+
+<div class="rank-list">
+
+
+${sorted.map(
+(item,index)=>
+renderRankItem(
+item,
+index+1
+)
+).join('')}
+
+
+</div>
+
+
+
+`;
+
+
+
+container.appendChild(section);
+
+
+
+});
+
 
 
 }
 
 
+
+
+
+
+function renderAwardsSummary(groups){
+
+
+
+const container=
+document.getElementById('awardsSummary');
+
+
+
+container.innerHTML='';
+
+
+
+Object.entries(groups)
+.forEach(([group,items])=>{
+
+
+const winner=
+[...items].sort(
+(a,b)=>
+Number(b['综合得分'])-
+Number(a['综合得分'])
+)[0];
+
+
+
+const config=
+GROUP_CONFIG[group]||
+{
+award:group
+};
+
+
+
+const card=
+document.createElement('div');
+
+
+card.className=
+'award-summary-card';
+
+
+
+card.innerHTML=`
+
+
+<div class="award-name">
+
+${config.award}
+
+</div>
+
+
+<div class="award-winner">
+
+🥇 ${winner['部门']}
+
+</div>
+
+
+<div class="award-bonus">
+
+综合得分：
+${Number(winner['综合得分']).toFixed(2)}
+
+</div>
+
+
+`;
+
+
+
+container.appendChild(card);
+
+
+
+});
+
+
+}
 
 
 
@@ -1085,94 +1982,96 @@ function renderGroups(rows,timeProgress){
 async function loadData(){
 
 
- try{
+try{
 
 
- const res=
- await fetch(API_URL);
-
-
- const data=
- await res.json();
+const res=
+await fetch(API_URL);
 
 
 
- console.log(data);
+const data=
+await res.json();
 
 
 
- if(data.error){
-   throw new Error(data.error);
- }
+if(data.error){
+
+throw new Error(data.error);
+
+}
 
 
 
- const progress=
- renderTimeProgress();
+const progress=
+renderTimeProgress();
 
 
 
- const groups={};
+const groups={};
+
 
 
 data.forEach(row=>{
 
- const g=row['组别']||'其他';
+
+const g=row['组别']||'其他';
 
 
- if(!groups[g]){
-   groups[g]=[];
- }
+if(!groups[g]){
 
- groups[g].push(row);
+groups[g]=[];
+
+}
+
+
+groups[g].push(row);
 
 
 });
 
 
-// 顶部三个卡片
+
 renderAwardsSummary(groups);
 
 
-// 下面排行榜
-renderGroups(
- data,
- progress
-);
+renderGroups(data);
 
 
 
- document.getElementById('lastUpdate')
- .textContent=
- '最后更新：'+
- new Date().toLocaleString('zh-CN');
-
-
-
- }
-
- catch(err){
-
-
- document.getElementById('groupsContainer')
- .innerHTML=
- `
- <div class="status error">
- 数据加载失败：
- ${err.message}
- </div>
- `;
-
-
- console.error(err);
-
-
- }
+document.getElementById('lastUpdate')
+.textContent=
+'最后更新：'+
+new Date()
+.toLocaleString('zh-CN');
 
 
 
 }
+catch(err){
 
+
+document.getElementById('groupsContainer')
+.innerHTML=`
+
+<div class="status error">
+
+数据加载失败：
+${err.message}
+
+</div>
+
+`;
+
+
+console.error(err);
+
+
+}
+
+
+
+}
 
 
 
@@ -1180,83 +2079,15 @@ loadData();
 
 
 setInterval(
- loadData,
- 5*60*1000
+loadData,
+5*60*1000
 );
 
 
-function renderAwardsSummary(groups){
-
-
- const container =
- document.getElementById('awardsSummary');
-
-
- container.innerHTML='';
-
-
-
- Object.entries(groups).forEach(([group,items])=>{
-
-
-   const winner =
-   [...items].sort(
-    (a,b)=>
-    Number(b['综合得分'])-
-    Number(a['综合得分'])
-   )[0];
-
-
-
-   const config =
-   GROUP_CONFIG[group] || {
-     award:group,
-     bonus:''
-   };
-
-
-
-   const card =
-   document.createElement('div');
-
-
-   card.className='award-summary-card';
-
-
-
-   card.innerHTML=`
-
-   <div class="award-name">
-   ${config.award}
-   </div>
-
-
-   <div class="award-winner">
-   🥇 ${winner['部门']}
-   </div>
-
-
-   <div class="award-bonus">
-
-   综合得分：
-   ${Number(winner['综合得分']).toFixed(2)}
-
-   </div>
-
-
-   `;
-
-
-
-   container.appendChild(card);
-
-
-
- });
-
-
-}
 
 </script>
+
+
 </body>
+
 </html>
